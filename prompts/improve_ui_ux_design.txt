@@ -1,0 +1,132 @@
+# Improve UI/UX Design
+
+## Task Description
+
+Redesign the Ollama Chat application to achieve a professional, modern, and polished aesthetic that would be suitable for a production SaaS product.
+
+## Current Issues
+
+### Visual Problems:
+- Purple/blue gradient background feels too vibrant and distracting
+- Color scheme lacks sophistication and professional appeal
+- Inconsistent spacing and padding across components
+- Sidebar design feels basic and could be more refined
+- Message bubbles could have better visual hierarchy
+- Overall design feels more like a demo than a professional product
+
+## Design Goals
+
+- Create a clean, minimalist interface that focuses on content
+- Use a sophisticated color palette suitable for professional tools
+- Implement consistent spacing, typography, and visual rhythm
+- Add subtle depth and hierarchy without overwhelming the user
+- Make it feel like a premium, trustworthy AI tool
+- Ensure excellent readability and accessibility
+
+## Color Palette Suggestions
+
+### Option 1: Dark Professional
+- Background: Deep charcoal/slate tones (#0f172a, #1e293b)
+- Accent: Subtle blue or teal for interactive elements (#3b82f6, #06b6d4)
+- Text: High contrast whites and grays
+- Surfaces: Slightly lighter than background with subtle borders
+- Success/Active: Muted green (#10b981)
+
+### Option 2: Light Professional
+- Background: Clean whites and light grays (#ffffff, #f8fafc)
+- Accent: Professional blue or indigo (#4f46e5, #6366f1)
+- Text: Dark grays for hierarchy (#0f172a, #475569)
+- Surfaces: White with subtle shadows and borders
+- Borders: Light gray (#e2e8f0)
+
+### Option 3: Modern Neutral
+- Background: Warm dark gray (#18181b, #27272a)
+- Accent: Vibrant but tasteful purple or blue (#8b5cf6, #3b82f6)
+- Text: Off-white with good contrast (#fafafa, #a1a1aa)
+- Surfaces: Slightly elevated with subtle shadows
+- Highlight: Amber or emerald for important actions
+
+## Specific Component Improvements
+
+### Overall Layout
+- Remove distracting gradient backgrounds
+- Use solid, professional colors
+- Add subtle shadows for depth instead of bright overlays
+- Implement consistent border radius (4px or 8px throughout)
+- Ensure proper whitespace and breathing room
+
+### Sidebar
+- Cleaner, more refined appearance
+- Better visual separation from main content
+- Improved conversation item design with better hover states
+- More sophisticated icons and typography
+- Subtle active state indication
+
+### Header
+- More minimal and professional
+- Better aligned controls
+- Refined model selector dropdown
+- Subtle status indicators
+- Professional typography
+
+### Message Bubbles
+- More refined user/assistant distinction
+- Better spacing and padding
+- Improved shadows and borders
+- Professional code block styling
+- Cleaner timestamp and action buttons
+
+### Input Area
+- More polished textarea design
+- Better send button styling
+- Refined focus states
+- Professional placeholder text
+
+### Typography
+- Use consistent font sizes and weights
+- Establish clear hierarchy (h1, h2, body, small)
+- Better line heights for readability
+- Professional font stack
+
+### Interactive Elements
+- Subtle, professional hover effects
+- Smooth transitions (150-200ms)
+- Clear focus states for accessibility
+- Tasteful disabled states
+
+## Design Principles
+
+- **Clarity over decoration** - Every visual element should serve a purpose
+- **Consistency** - Same patterns, spacing, colors throughout
+- **Subtlety** - Effects should enhance, not distract
+- **Professionalism** - Looks like a tool you'd trust with important work
+- **Accessibility** - High contrast, clear focus states, readable text
+
+## Inspiration
+
+Think of the visual quality of:
+- **Linear** (linear.app) - Clean, fast, professional
+- **Vercel Dashboard** - Minimal, sophisticated, excellent typography
+- **GitHub's UI** - Professional, trustworthy, clear hierarchy
+- **Notion** - Clean, organized, great use of space
+- **ChatGPT** - Simple, focused, good readability
+
+## Requirements
+
+- Maintain all existing functionality - only update styling
+- Use only Tailwind CSS utility classes
+- Ensure responsive design works across screen sizes
+- Keep excellent contrast ratios for accessibility (WCAG AA minimum)
+- Test that all interactive elements are clearly visible and usable
+
+## Output
+
+Update all component files with the new professional design:
+- App.tsx
+- Sidebar.tsx
+- ChatHeader.tsx
+- ChatMessages.tsx
+- MessageBubble.tsx
+- ChatInput.tsx
+
+Provide brief explanation of the new design direction and key color choices.

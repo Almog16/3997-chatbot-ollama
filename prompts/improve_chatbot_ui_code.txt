@@ -1,0 +1,83 @@
+# Improve Chatbot UI Code Structure
+
+## Task Description
+
+Refactor a React + TypeScript chatbot application from a single file into a well-organized, modular file structure.
+
+## Current State
+
+**Problem:** Everything is in one App.tsx file (types, hooks, components, main app)
+
+**Issues:**
+- Hard to maintain
+- Difficult to test individual components
+- Poor code reusability
+
+## Desired File Structure
+
+### src/types/index.ts
+All TypeScript interfaces and types:
+- Message interface
+- OllamaModel interface
+- OllamaResponse interface
+
+### src/hooks/useOllama.ts
+Custom hook for Ollama API integration:
+- fetchModels function
+- sendMessage function with streaming
+- Error handling and loading states
+
+### src/utils/markdown.ts
+Helper function for rendering markdown:
+- Parse code blocks
+- Parse inline code
+- Parse bold text
+
+### src/components/MessageBubble.tsx
+Individual message component:
+- Display user/assistant messages
+- Copy functionality
+- Markdown rendering
+
+### src/components/ChatHeader.tsx
+Header component:
+- Title and status indicator
+- Model selector dropdown
+- Clear conversation button
+
+### src/components/ChatMessages.tsx
+Messages container component:
+- Display list of messages
+- Empty state
+- Typing indicator
+- Auto-scroll functionality
+
+### src/components/ChatInput.tsx
+Input area component:
+- Textarea with auto-resize
+- Send button
+- Keyboard shortcuts (Enter to send, Shift+Enter for new line)
+
+### src/App.tsx
+Main app component (orchestrates everything):
+- Manage messages state
+- Handle sending messages
+- Compose all components together
+
+## Requirements
+
+- Maintain exact same functionality - only reorganize code
+- Use proper TypeScript imports and exports
+- Ensure all types are correctly shared across files
+- Keep all existing features (streaming, markdown, copy, etc.)
+- Follow React best practices for component composition
+- Add brief comments explaining each file's purpose
+
+## Output Format
+
+For each file, provide:
+1. Full file path
+2. Complete code with all imports
+3. Brief description of what the file does
+
+Start with types, then utils, then hooks, then components (in dependency order), and finally App.tsx.

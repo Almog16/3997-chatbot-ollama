@@ -1,0 +1,202 @@
+# Add Agent and Tool Calling Capabilities
+
+## Task Description
+
+Enhance the Ollama chatbot backend to support agent capabilities with tool calling (web search, calculations, etc.) using LangGraph framework while maintaining streaming responses.
+
+## Current Limitations
+
+- Direct Ollama API calls without agent orchestration
+- No tool calling support
+- No web search capabilities
+- No multi-step reasoning or planning
+- Limited to single model interactions
+
+## Architecture Goals
+
+- Use LangGraph for agent orchestration and state management
+- Support multiple tools (web search, calculator, code execution, etc.)
+- Maintain streaming responses for real-time feedback
+- Work seamlessly with Ollama models that support function calling
+- Provide clear visibility into agent reasoning process
+- Easy to extend with new tools
+
+## Recommended Stack
+
+**Framework:** LangGraph - for agent workflow and state management
+
+**LLM Integration:** LangChain Ollama integration - for model interactions
+
+**Tools:**
+- Calculator: Python eval for mathematical calculations
+- Web Search: Tavily API for real-time web information
+- Wikipedia: Wikipedia API for factual queries
+
+**Dependencies:**
+- langchain
+- langchain-ollama
+- langgraph
+- tavily-python (for web search)
+- httpx (already installed)
+
+## Implementation Structure
+
+### src/agent/graph.py
+LangGraph workflow definition:
+- Agent state model
+- Graph nodes (call_model, execute_tools, route_decision)
+- Graph edges and conditional routing
+- Streaming support
+
+### src/agent/tools.py
+Tool definitions:
+- Web search tool (using Tavily)
+- Calculator tool
+- Wikipedia search tool
+- Custom tool interface for easy extension
+
+### src/agent/state.py
+Agent state management:
+- Message history
+- Tool call results
+- Reasoning steps
+- Metadata tracking
+
+### src/agent/prompts.py
+System prompts:
+- Agent instructions
+- Tool usage guidelines
+- Response formatting
+
+### main.py
+Updated FastAPI server:
+- New /api/chat endpoint using LangGraph agent
+- Stream agent reasoning and tool calls
+- Backward compatible with simple chat mode
+
+## Key Features
+
+### Streaming Tool Calls
+Stream not just the final response, but also:
+- "🔍 Searching the web for..."
+- "🧮 Calculating..."
+- "📊 Found X results"
+- Real-time visibility into agent thinking
+
+### Tool Choice Control
+Support parameters to control tool usage:
+- **auto**: Agent decides when to use tools
+- **required**: Must use at least one tool
+- **none**: Disable tools (fallback to simple chat)
+
+### Multi-Step Reasoning
+Agent can chain multiple tool calls:
+- Search web → Summarize → Calculate
+- Plan → Execute → Verify
+
+### Error Handling
+Graceful degradation:
+- Tool failures don't crash the agent
+- Fallback to model knowledge if tools fail
+- Clear error messages to user
+
+## Ollama Model Requirements
+
+Use Ollama models that support function calling:
+- llama3.1 (8B or larger)
+- llama3.2 (3B or larger)
+- mistral
+- mixtral
+- qwen2.5
+
+**Note:** Some smaller models may not reliably call functions. Test with your chosen model.
+
+## Streaming Protocol
+
+Stream JSON events with different types:
+
+```json
+{
+  "type": "thought",
+  "content": "I need to search for current information..."
+}
+```
+
+```json
+{
+  "type": "tool_call",
+  "tool": "web_search",
+  "args": {"query": "latest AI news"}
+}
+```
+
+```json
+{
+  "type": "tool_result",
+  "tool": "web_search",
+  "result": "Found 10 results..."
+}
+```
+
+```json
+{
+  "type": "message",
+  "content": "Based on the search results..."
+}
+```
+
+```json
+{
+  "type": "done",
+  "complete": true
+}
+```
+
+## Environment Variables
+
+Add to config.py or .env:
+- TAVILY_API_KEY (for web search)
+- OLLAMA_MODEL (default model to use)
+- ENABLE_TOOLS (enable/disable agent mode)
+- MAX_ITERATIONS (prevent infinite loops)
+
+## Requirements
+
+- Maintain backward compatibility with existing /api/chat endpoint
+- Add new /api/agent/chat endpoint for agent mode
+- Keep streaming responses working smoothly
+- Provide clear documentation for tool configuration
+- Include error handling and logging
+- Make it easy to add new tools
+
+## Example Usage
+
+**User:** "What's the weather in New York and convert 75°F to Celsius?"
+
+**Agent Flow:**
+1. [STREAM] "🔍 Searching for current weather in New York..."
+2. [TOOL_CALL] web_search(query="weather New York current")
+3. [TOOL_RESULT] Returns weather data
+4. [STREAM] "🧮 Converting temperature..."
+5. [TOOL_CALL] calculator(expression="(75-32)*5/9")
+6. [TOOL_RESULT] Returns 23.89
+7. [STREAM] "Based on current data, the weather in New York is..."
+
+## Output Deliverables
+
+Provide complete, production-ready code for:
+1. LangGraph agent implementation with state management
+2. Tool definitions (web search, calculator, etc.)
+3. Updated FastAPI endpoints with streaming support
+4. Configuration and environment setup
+5. requirements.txt with all dependencies
+6. README with setup instructions and examples
+7. Testing examples showing tool usage
+
+## Bonus Features
+
+- Memory/context window management for long conversations
+- Tool result caching to avoid redundant API calls
+- Rate limiting for tool usage
+- Analytics/logging of tool usage patterns
+- Support for custom user-defined tools

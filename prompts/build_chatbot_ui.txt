@@ -1,0 +1,117 @@
+# Build Chatbot UI
+
+## Task
+
+Create a modern, production-ready chatbot application in React with TypeScript that connects to an Ollama backend. The project is scaffolded with Vite.
+
+## Technical Requirements
+
+- Use React 18+ with TypeScript and functional components with hooks
+- Connect to Ollama API running locally (default: http://localhost:11434)
+- Support streaming responses from Ollama for a real-time chat experience
+- Use modern React patterns (useState, useEffect, useRef, custom hooks where appropriate)
+- Implement proper error handling for network requests and API errors
+- Include TypeScript types for all props, state, and API responses
+
+## UI Design Requirements
+
+- Create a modern, visually striking interface with smooth animations
+- Use a contemporary design system (consider glassmorphism, gradients, or modern dark mode aesthetics)
+- Include smooth transitions and micro-interactions for better UX
+- Make the interface responsive and mobile-friendly
+- Display messages in a clean chat bubble format with distinct user/assistant styling
+- Show typing indicators while the AI is generating responses
+- Include auto-scroll to latest messages
+- Add a sleek input area with send button
+
+## Features
+
+- Message history that persists during the session
+- Support for markdown rendering in AI responses (code blocks, lists, bold, etc.)
+- Model selection dropdown to choose different Ollama models
+- Clear conversation button
+- Copy message functionality
+- Error states with user-friendly messages
+- Loading states during API calls
+
+## Component Organization
+
+Create a well-organized component structure:
+- Main App component
+- ChatContainer component
+- MessageList component
+- Message component (for individual messages)
+- ChatInput component
+- ModelSelector component (optional)
+- Custom hooks for Ollama API integration (useOllama or similar)
+
+## File Structure
+
+Provide complete, production-ready code for:
+- src/App.tsx (main component)
+- src/components/* (all chat components)
+- src/hooks/* (custom hooks for API calls)
+- src/types.ts (TypeScript interfaces and types)
+- src/index.css (global styles, can include Tailwind)
+
+## Ollama API Integration
+
+### API Details
+
+- Endpoint for chat: POST http://localhost:11434/api/chat
+- Endpoint for listing models: GET http://localhost:11434/api/tags
+- Use streaming: true for real-time responses
+- Request format:
+```json
+{
+  "model": "llama2",
+  "messages": [{"role": "user", "content": "Hello"}],
+  "stream": true
+}
+```
+- Response is newline-delimited JSON (NDJSON) when streaming
+
+### Implementation Notes
+
+- Use fetch API or axios for HTTP requests
+- Handle streaming responses by reading the response body as a stream
+- Parse NDJSON format (each line is a separate JSON object)
+- Accumulate message chunks as they arrive
+- Handle the "done" flag to know when streaming is complete
+
+## Styling
+
+**Approach:** Use Tailwind CSS for styling (already common with Vite projects)
+
+**Aesthetic:**
+- Modern and clean design
+- Smooth animations and transitions
+- Professional color scheme (consider dark mode or gradient backgrounds)
+- Proper spacing and typography
+- Polished, production-ready appearance
+
+## Best Practices
+
+- Use semantic HTML and proper accessibility attributes
+- Implement proper error boundaries
+- Add helpful comments for complex logic
+- Use meaningful variable and function names
+- Optimize re-renders with useMemo/useCallback where beneficial
+- Handle edge cases (empty states, connection errors, long messages)
+
+## Output Format
+
+Provide complete, working code files that can be directly used in the project. Include:
+1. All component files with full implementation
+2. TypeScript types and interfaces
+3. Custom hooks for Ollama integration
+4. CSS/styling code
+5. Brief setup instructions for any additional dependencies needed
+6. Example of how to run Ollama locally if needed
+
+## Constraints
+
+- Do NOT use any external UI libraries (like MUI, Chakra) - build with Tailwind and custom components
+- Keep the code clean, readable, and well-commented
+- Ensure TypeScript strict mode compatibility
+- Make the app work out-of-the-box with minimal configuration

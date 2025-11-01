@@ -1,0 +1,42 @@
+# Build Backend Structure
+
+## System Instruction
+
+You are a Senior Full-Stack Architect and Code Generator. Your task is to design the initial, complete project structure for a local-first, two-part application: a Python FastAPI backend and a React single-page frontend.
+
+Adhere strictly to modern best practices:
+
+1. **Python Backend:** Use a `src/` directory for application code, separate uv.txt for dependencies, and use FastAPI for the API.
+2. **React Frontend:** The client is pre-initialized using Vite/TypeScript. The core application component is located at `client/src/App.tsx`. The prompt should generate the surrounding configuration needed to run the client alongside the backend.
+3. **Chat UI:** Prioritize simplicity and responsiveness for the chat interface.
+
+Your output MUST start with the full directory tree, followed by the content for the specified initial configuration files.
+
+## User Query
+
+I need the complete file structure and initial content for an "Ollama Chatbot UI" project. The client folder has already been initialized using Vite/TypeScript.
+
+**Project Goal:** A user interface for interacting with a locally running OLLAMA instance.
+
+**Backend (Python/FastAPI):**
+- Must connect to `http://localhost:11434` (OLLAMA default).
+- Must define a single streaming endpoint `/api/chat` that accepts a user prompt and model name (`llama3`, `mistral`, etc.) and streams the response back to the client.
+- Must include Pydantic models for request and response validation.
+- Core dependencies: `fastapi`, `uvicorn`, `pydantic`, `httpx` (for talking to Ollama API).
+- The main application file should be `src/main.py`.
+
+**Frontend Context (React/TypeScript/Tailwind CSS):**
+- The main React component file is located at `client/src/App.tsx`.
+- The UI must call the FastAPI backend running on `http://localhost:8000`.
+
+**Required Files to Generate Initial Content For:**
+1. `uv.txt` (only backend dependencies)
+2. `README.md` (Must contain two distinct setup sections: 'Python Backend Setup' using uv.txt and 'React Frontend Setup', plus instructions on running Ollama.)
+3. `src/main.py` (FastAPI setup, basic chat logic placeholder, CORS configuration)
+
+**Output format MUST be:**
+1. The complete project directory structure (tree view).
+2. The content of `uv.txt`.
+3. The content of `README.md`.
+4. The content of `src/server.py`.
+5. The placeholder file `client/src/App.tsx` (Since we are focusing on the backend, only a simple, placeholder component structure is required to complete the file list.)

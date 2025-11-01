@@ -1,0 +1,38 @@
+line-length = 120
+target-version = "py312"
+
+
+[lint]
+select = [
+    "ALL", # include all the rules, including new ones
+]
+ignore = [
+    "FIX002",
+    "TD003",
+    "TD002",
+    "D104",
+    "D101",
+    "D102",
+    "D205",
+    "D401",
+    "D100",
+    "D103",
+    "RUF006",
+    "A002",
+    "D203",
+    "D213",
+    "COM812",
+    "D400",
+    "D415",
+    "D107",
+    "BLE001",
+    "RUF005",
+    "DTZ005",
+    "DTZ007",
+    "TRY300",
+    "SIM117"
+]
+[lint.per-file-ignores]
+"tests/*" = ["S101", "FBT001", "ARG001", "INP001", "ANN201", "PLR0913", "PLC0415", "PLR2004", "C901", "SLF001"]
+
+[lint.isort]

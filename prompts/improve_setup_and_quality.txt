@@ -1,0 +1,52 @@
+# Improve Setup and Code Quality
+
+## Task Description
+
+As a Senior Full-Stack Architect, implement code quality and automation tools for the Python backend. This involves creating a standard Makefile, configuring Ruff, and ensuring the application code adheres to the new linting rules and is robust against known API issues.
+
+## Actions
+
+### Action 1: Create ruff.toml
+
+**Type:** Create New File
+**Filename:** ruff.toml
+
+**Details:** Configure Ruff with target Python 3.10. Set max line length to 100. Select common rules (E, F, W, I). Ignore documentation-related rules (D).
+
+### Action 2: Create Makefile
+
+**Type:** Create New File
+**Filename:** Makefile
+
+**Details:** Define the following targets:
+- 'install': Runs `uv pip install '.[server,linting]'`
+- 'run': Runs `uvicorn src.server:app --reload`
+- 'lint': Runs `ruff check src/`
+- 'format': Runs `ruff check src/ --fix`
+
+### Action 3: Update README.md
+
+**Type:** Update Existing File
+**Filename:** README.md
+
+**Details:**
+- Update the 'Python Backend Setup' section to use 'make install' and 'make run'
+- Add a new section for 'Code Quality' that instructs users to use 'make lint' and 'make format'
+
+### Action 4: Update src/server.py
+
+**Type:** Update Existing File
+**Filename:** src/server.py
+
+**Details:**
+- Ensure code conforms to new Ruff formatting
+- Refactor the `ollama_stream_generator` to explicitly handle the `404 Not Found` error during the initial Ollama API call
+- If the modern `/api/chat` endpoint fails with 404, it should attempt a fallback connection using the legacy `/api/generate` endpoint before failing completely
+- Provide clear error messages in both failure cases
+
+### Action 5: Update pyproject.toml
+
+**Type:** Update Existing File
+**Filename:** pyproject.toml
+
+**Details:** Verify the current configuration is correct and make no changes unless necessary to support the other actions (e.g., ensuring ruff version is compatible).

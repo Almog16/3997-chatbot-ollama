@@ -1,0 +1,48 @@
+# Add Comprehensive Testing Workflows
+
+## Task Description
+
+As a Senior Full-Stack QA Strategist, establish robust testing coverage across both the FastAPI backend and the React/Vite client. Focus on realistic mocks, deterministic test heuristics, and cross-environment confidence so contributors can verify changes without relying on live Ollama services.
+
+## Context & Goals
+
+- Maintain the existing project layout: backend source under `src/`, frontend inside `client/`.
+- Tests must remain self-contained; avoid live network calls or real Ollama dependencies.
+- Reinforce DX with scripts/config so engineers can run the suites locally and in CI.
+
+## Actions
+
+### Action 1: Configure Playwright for the client
+- **Type:** Create / Update Files inside `client`
+- Add `@playwright/test` as a dev dependency and expose an `npm run test:e2e` script.
+- Create `playwright.config.ts` that boots the Vite dev server, exercises Chromium/Firefox/WebKit, and records traces/videos only on failure.
+- Place end-to-end specs under `client/tests/`, mocking backend endpoints (`/api/models`, `/api/chat`, `/api/agent/chat`) to keep runs deterministic.
+- Cover flows:
+  - Onboarding state and suggestion shortcuts.
+  - Conversation CRUD (new, rename, delete) with optimistic UI checks.
+  - Simple streaming responses verifying incremental rendering and composer state.
+  - Agent-mode gating for unsupported models.
+  - Tool indicator surfaces (tool calls/results) when agent responses stream in.
+
+### Action 2: Add pytest-based coverage for the backend
+- **Type:** Create / Update Files at root `tests/`
+- Depend on `pytest` and `pytest-asyncio` via `pyproject.toml`.
+- Use `httpx.AsyncClient` with `ASGITransport` fixtures to hit FastAPI routes without starting Uvicorn.
+- Mock `httpx.AsyncClient` calls used by the production code so no real Ollama calls occur.
+- Validate scenarios:
+  - `/api/health` returns the proper heartbeat payload.
+  - `/api/models` handles success + failure paths (including logging-friendly errors).
+  - `/api/chat` streams back the mocked JSON lines.
+  - `/api/agent/chat` in simple mode yields status + final message + done event when tools are disabled.
+
+### Action 3: Document test execution ergonomics
+- **Type:** Update existing doc if necessary (e.g., README, prompts)
+- Note how to install dependencies (`npm install`, `uv sync`) and run both suites (`npm run test:e2e`, `pytest`).
+- Call out Playwright browser install (`npx playwright install`) for first-time setup.
+
+## Guardrails
+
+- Preserve existing code formatting; add concise comments only where behavior is non-obvious (e.g., test doubles).
+- Keep fixtures reusable and lightweight; prefer pure functions over classes for mock clients.
+- Ensure test outputs are cleaned up (no stray reports committed).
+- Verify both suites pass before concluding the task.
