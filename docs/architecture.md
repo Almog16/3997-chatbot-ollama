@@ -9,7 +9,7 @@ This document captures the core architectural views for the 3997 Chatbot Ollama 
 ```mermaid
 graph LR
     subgraph User
-        U[Power User\nBrowser]
+        U[Power User<br/>Browser]
     end
 
     subgraph Local Machine
