@@ -34,13 +34,13 @@ graph LR
 ```mermaid
 graph TB
     subgraph Browser
-        FE[React App\n(Vite + Tailwind)]
+    FE["React App<br/>Vite + Tailwind"]
     end
 
     subgraph Backend
-        FastAPI[FastAPI Server\nuvicorn]
-        LangGraph[LangGraph Agent Graph]
-        Tools[Tooling Layer\n(search, calculator, etc.)]
+        FastAPI["FastAPI Server<br/>uvicorn"]
+        LangGraph["LangGraph Agent Graph"]
+        Tools["Tooling Layer<br/>(search, calculator, etc.)"]
     end
 
     subgraph Runtime
