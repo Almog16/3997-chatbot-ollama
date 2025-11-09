@@ -122,6 +122,8 @@ Shows conversation creation, streaming responses, and agent tooling in a single 
 
 ## Architecture Overview
 
+For detailed C4-style diagrams (context, container, component) see [`docs/architecture.md`](docs/architecture.md).
+
 ### System Design
 
 The application follows a clean separation of concerns with three main components:
