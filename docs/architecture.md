@@ -18,9 +18,9 @@ graph LR
         Ollama[(Ollama Runtime)]
     end
 
-    U -->|HTTPS (localhost)| UI
-    UI -->|REST/SSE| API
-    API -->|HTTP JSON| Ollama
+    U -->|"HTTPS (localhost)"| UI
+    UI -->|"REST / SSE"| API
+    API -->|"HTTP JSON"| Ollama
 ```
 
 **Key points**
@@ -47,7 +47,9 @@ graph TB
         OllamaRT[(Ollama Daemon)]
     end
 
-    FE -->|GET /api/models|\n|POST /api/chat|\n|POST /api/agent/chat| FastAPI
+    FE -->|"GET /api/models"| FastAPI
+    FE -->|"POST /api/chat"| FastAPI
+    FE -->|"POST /api/agent/chat"| FastAPI
     FastAPI -->|Invoke| LangGraph
     LangGraph -->|Tool calls| Tools
     FastAPI -->|JSON streaming| FE
