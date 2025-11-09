@@ -45,11 +45,14 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+reports/coverage.xml
 *.cover
 *.py.cover
 .hypothesis/
 .pytest_cache/
 cover/
+client/playwright-report/
+client/test-results/
 
 # Translations
 *.mo

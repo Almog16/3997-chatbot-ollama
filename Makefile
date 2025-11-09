@@ -19,6 +19,10 @@ run:
 	@echo "--- Starting Uvicorn server (https://www.google.com/search?q=http://127.0.0.1:8000) ---"
 	uvicorn src.server:app --reload
 
+test:
+	@echo "--- Running backend tests with coverage ---"
+	uv run pytest
+
 # REACT FRONTEND
 install-client:
 	@echo "👉 Installing React frontend dependencies (npm install)…"
@@ -27,6 +31,10 @@ install-client:
 run-client:
 	@echo "--- Starting React development server ---…"
 	npm --prefix client run dev
+
+test-client:
+	@echo "--- Running Playwright E2E suite ---"
+	npm --prefix client run test:e2e
 
 # CODE QUALITY & LINTING
 lint:

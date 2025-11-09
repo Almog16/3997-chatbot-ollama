@@ -103,9 +103,12 @@ The tests mock backend endpoints so they run without Ollama or the FastAPI serve
 1. Ensure the Python environment is synced (`make install`).
 2. Execute:
    ```bash
-   .venv/bin/python -m pytest
+   uv run pytest
    ```
-These tests mount the FastAPI app in-process using `httpx.ASGITransport` and stub external Ollama calls.
+These tests mount the FastAPI app in-process using `httpx.ASGITransport` and stub external Ollama calls.  
+Coverage reports are emitted automatically to the terminal and as `reports/coverage.xml` (JUnit-compatible).
+
+For the full QA matrix, coverage targets, and expected outputs, see [`docs/testing.md`](docs/testing.md).
 
 ## Visual Preview
 

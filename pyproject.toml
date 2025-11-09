@@ -17,6 +17,7 @@ dependencies = [
     "langchain>=0.3.27",
     "pytest==8.3.4",
     "pytest-asyncio==0.23.7",
+    "pytest-cov==5.0.0",
 ]
 
 # Development/Server dependencies, allowing us to install the server runner explicitly
@@ -36,4 +37,10 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 pythonpath = [
     ".",
+]
+addopts = [
+    "--cov=src",
+    "--cov=tests",
+    "--cov-report=term-missing",
+    "--cov-report=xml:reports/coverage.xml",
 ]

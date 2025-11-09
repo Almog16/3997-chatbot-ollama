@@ -257,3 +257,119 @@ async def test_agent_endpoint_tool_flow(
     assert {"type": "tool_result", "tool": "calculator", "result": "4"} in events
     assert {"type": "message", "content": "All done"} in events
     assert events[-1]["type"] == "done"
+
+
+@pytest.mark.asyncio
+async def test_agent_endpoint_disabled_mode_falls_back_to_simple(
+    monkeypatch: pytest.MonkeyPatch,
+    async_client: AsyncClient,
+) -> None:
+    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", False)
+
+    class DummyLLM:
+        def invoke(self, messages: list[Any]) -> Any:
+            return type("Response", (), {"content": "Fallback reply"})
+
+    monkeypatch.setattr(server, "create_simple_llm", lambda model_name: DummyLLM())
+
+    response = await async_client.post(
+        "/api/agent/chat",
+        json={
+            "model": "test-model",
+            "messages": [{"role": "user", "content": "Hi"}],
+            "tool_choice": "auto",
+            "stream": True,
+        },
+    )
+
+    events = []
+    async for line in response.aiter_lines():
+        if line:
+            events.append(json.loads(line))
+
+    assert {"type": "status", "content": "Simple chat mode"} in events
+    assert {"type": "message", "content": "Fallback reply"} in events
+    assert events[-1]["type"] == "done"
+
+
+@pytest.mark.asyncio
+async def test_agent_endpoint_stream_handles_agent_exception(
+    monkeypatch: pytest.MonkeyPatch,
+    async_client: AsyncClient,
+) -> None:
+    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", True)
+
+    class ExplodingIterator:
+        def __aiter__(self) -> "ExplodingIterator":
+            return self
+
+        async def __anext__(self) -> dict:
+            raise RuntimeError("boom")
+
+    class ExplodingAgent:
+        def astream(self, initial_state: dict) -> ExplodingIterator:
+            return ExplodingIterator()
+
+    monkeypatch.setattr(server, "create_agent_graph", lambda model_name: ExplodingAgent())
+
+    response = await async_client.post(
+        "/api/agent/chat",
+        json={
+            "model": "test-model",
+            "messages": [{"role": "user", "content": "break"}],
+            "tool_choice": "auto",
+            "stream": True,
+        },
+    )
+
+    events = []
+    async for line in response.aiter_lines():
+        if line:
+            events.append(json.loads(line))
+
+    assert {"type": "status", "content": "Agent mode activated"} in events
+    assert {"type": "error", "content": "Agent error: boom"} in events
+
+
+@pytest.mark.asyncio
+async def test_chat_endpoint_handles_connect_error(
+    monkeypatch: pytest.MonkeyPatch,
+    async_client: AsyncClient,
+) -> None:
+    request = httpx.Request("POST", server.OLLAMA_API_BASE)
+
+    class FailingStreamResponse:
+        async def __aenter__(self) -> "FailingStreamResponse":
+            raise httpx.ConnectError("offline", request=request)
+
+        async def __aexit__(self, exc_type, exc, tb) -> None:
+            return None
+
+    class FailingStreamingClient:
+        def __init__(self, *args: Any, **kwargs: Any) -> None:
+            pass
+
+        async def __aenter__(self) -> "FailingStreamingClient":
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb) -> None:
+            return None
+
+        def stream(self, method: str, url: str, json: dict[str, Any]) -> FailingStreamResponse:
+            return FailingStreamResponse()
+
+    monkeypatch.setattr(server.httpx, "AsyncClient", FailingStreamingClient)
+
+    response = await async_client.post(
+        "/api/chat",
+        json={"model": "test-model", "messages": [], "stream": True},
+    )
+
+    errors = []
+    async for line in response.aiter_lines():
+        if line:
+            errors.append(json.loads(line))
+
+    assert errors == [
+        {"error": f"Error: Could not connect to Ollama at {server.OLLAMA_API_BASE}"},
+    ]
