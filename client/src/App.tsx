@@ -11,6 +11,15 @@ import { ChatMessages } from './components/ChatMessages';
 import { ChatInput } from './components/ChatInput';
 import { ToolIndicator } from './components/ToolIndicator';
 
+/**
+ * The main component for the chat application.
+ *
+ * This component manages the application's state, including conversations,
+ * messages, and user settings. It orchestrates the different parts of the UI
+ * and handles the logic for communicating with the backend.
+ *
+ * @returns The rendered App component.
+ */
 export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string>('');
@@ -55,15 +64,29 @@ export default function App() {
     setInput(text);
   };
 
+  /**
+   * Generates a unique ID for a new conversation.
+   * @returns {string} A unique identifier.
+   */
   function generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
   }
 
+  /**
+   * Generates a title for a new conversation based on the first message.
+   * @param {string} firstMessage - The content of the first message.
+   * @returns {string} A truncated title.
+   */
   function generateTitle(firstMessage: string): string {
     const preview = firstMessage.slice(0, 50);
     return preview.length < firstMessage.length ? preview + '...' : preview;
   }
 
+  /**
+   * Updates a conversation with new data.
+   * @param {string} id - The ID of the conversation to update.
+   * @param {Partial<Conversation>} updates - An object with the properties to update.
+   */
   function updateConversation(id: string, updates: Partial<Conversation>) {
     setConversations(prev =>
       prev.map(conv =>
@@ -72,6 +95,9 @@ export default function App() {
     );
   }
 
+  /**
+   * Fetches the list of available models from the backend.
+   */
   const fetchModels = async () => {
     try {
       // Connect to our FastAPI backend, not Ollama directly!
@@ -85,6 +111,9 @@ export default function App() {
     }
   };
 
+  /**
+   * Creates a new, empty conversation.
+   */
   const handleNewConversation = () => {
     const newConv: Conversation = {
       id: generateId(),
@@ -97,6 +126,10 @@ export default function App() {
     setCurrentConversationId(newConv.id);
   };
 
+  /**
+   * Deletes a conversation.
+   * @param {string} id - The ID of the conversation to delete.
+   */
   const handleDeleteConversation = (id: string) => {
     setConversations(prev => prev.filter(c => c.id !== id));
 
@@ -110,10 +143,18 @@ export default function App() {
     }
   };
 
+  /**
+   * Renames a conversation.
+   * @param {string} id - The ID of the conversation to rename.
+   * @param {string} newTitle - The new title for the conversation.
+   */
   const handleRenameConversation = (id: string, newTitle: string) => {
     updateConversation(id, { title: newTitle });
   };
 
+  /**
+   * Clears all messages from the current conversation.
+   */
   const clearConversation = () => {
     if (currentConversationId) {
       updateConversation(currentConversationId, {
@@ -123,6 +164,9 @@ export default function App() {
     }
   };
 
+  /**
+   * Sends the user's message to the appropriate backend endpoint.
+   */
   const handleSend = async () => {
     if (!input.trim() || isStreaming || !currentConversationId) return;
 
@@ -160,6 +204,10 @@ export default function App() {
     }
   };
 
+  /**
+   * Handles chat requests in agent mode, processing tool calls and results.
+   * @param {Message[]} newMessages - The updated list of messages.
+   */
   const handleAgentChat = async (newMessages: Message[]) => {
     try {
       // Add a temporary "thinking" message immediately
@@ -270,6 +318,10 @@ export default function App() {
     }
   };
 
+  /**
+   * Handles simple chat requests without agent capabilities.
+   * @param {Message[]} newMessages - The updated list of messages.
+   */
   const handleSimpleChat = async (newMessages: Message[]) => {
     try {
       // Use our backend, not Ollama directly!

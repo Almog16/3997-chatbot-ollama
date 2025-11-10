@@ -1,7 +1,10 @@
 /**
- * Sidebar Component - Enhanced Version
+ * @file Sidebar.tsx
+ * @description This component renders the sidebar for the chat application.
+ * It displays a list of conversations, allows creating new conversations,
+ * and provides options to rename or delete existing conversations.
+ * It is a stateful component that manages the editing state of conversation titles.
  */
-
 import { type FC, useState } from 'react';
 import { MessageSquare, Plus, Trash2, Edit2, Check, X, Sparkles } from 'lucide-react';
 import type { Conversation } from '../types';
@@ -11,7 +14,7 @@ interface SidebarProps {
   currentConversationId: string;
   onSelectConversation: (id: string) => void;
   onNewConversation: () => void;
-  onDeleteConversation: (id: string) => void;
+  onDeleteConversation: (id:string) => void;
   onRenameConversation: (id: string, newTitle: string) => void;
 }
 

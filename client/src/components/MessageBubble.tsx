@@ -1,7 +1,11 @@
 /**
- * MessageBubble Component - Enhanced Version
+ * @file MessageBubble.tsx
+ * @description This component renders a single chat message bubble.
+ * It distinguishes between messages from the user and the assistant, styling them differently.
+ * It also provides a button to copy the message content to the clipboard and indicates when tools are used.
+ *
+ * @props {Message} message - The message object to be rendered.
  */
-
 import { type FC, useState } from 'react';
 import { Copy, Check, User, Bot, Sparkles } from 'lucide-react';
 import type { Message } from '../types';
@@ -28,8 +32,8 @@ export const MessageBubble: FC<MessageBubbleProps> = ({ message }) => {
       <div className={`max-w-[85%] flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
         {/* Avatar */}
         <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-          isUser 
-            ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20' 
+          isUser
+            ? 'bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/20'
             : 'bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-emerald-500/30'
         }`}>
           {isUser ? (

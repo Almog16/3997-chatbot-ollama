@@ -36,7 +36,16 @@ app.add_middleware(
 
 @app.get("/api/health")
 async def health_check() -> dict[str, str]:
-    """Health check endpoint."""
+    """
+    Performs a health check on the API.
+
+    This endpoint can be used to verify that the FastAPI server is running and
+    to check the status of agent mode.
+
+    Returns:
+        A dictionary containing the health status, a message, and the current
+        agent mode status ('enabled' or 'disabled').
+    """
     return {
         "status": "ok",
         "message": "FastAPI server running",
@@ -46,7 +55,17 @@ async def health_check() -> dict[str, str]:
 
 @app.get("/api/models")
 async def list_models() -> dict:
-    """Get available Ollama models."""
+    """
+    Retrieves the list of available models from the Ollama API.
+
+    This endpoint fetches model tags from the local Ollama instance and returns
+    them as a list. It includes error handling for network issues or if the
+    Ollama server is not accessible.
+
+    Returns:
+        A dictionary containing a list of model objects, or an error message
+        if the request fails.
+    """
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get("http://localhost:11434/api/tags")
@@ -59,7 +78,19 @@ async def list_models() -> dict:
 
 
 async def ollama_stream_generator(request_data: dict) -> AsyncGenerator[str, None]:
-    """Generator for direct Ollama API streaming (backward compatible)."""
+    """
+    Streams responses directly from the Ollama API.
+
+    This generator function is used for backward compatibility, connecting to
+    Ollama's standard chat endpoint and streaming the response line by line.
+
+    Args:
+        request_data: The payload to be sent to the Ollama API, including
+                      the model name and messages.
+
+    Yields:
+        A string for each line of the response from the Ollama API.
+    """
     LOGGER.info("Streaming request -> model=%s", request_data.get("model"))
     try:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -93,8 +124,21 @@ async def agent_stream_generator( # noqa: C901, PLR0912
         model_name: str,
         tool_choice: str,
 ) -> AsyncGenerator[str, None]:
-    """Generator for agent mode with tool calling support.
-    Streams reasoning steps, tool calls, and final responses.
+    """
+    Streams responses from the agent, including tool calls and reasoning steps.
+
+    This function orchestrates the agent's workflow, streaming each step of
+    the process, from tool calls and results to the final message. It can
+    operate in either agent mode or a simple LLM mode if tools are not required.
+
+    Args:
+        messages: A list of messages in the current chat session.
+        model_name: The name of the language model to use.
+        tool_choice: The user's preference for using tools ('auto', 'none', etc.).
+
+    Yields:
+        A JSON string for each event in the agent's execution, such as
+        status updates, tool calls, tool results, and the final message.
     """
     try:
         # Convert messages to LangChain format
@@ -192,8 +236,18 @@ async def agent_stream_generator( # noqa: C901, PLR0912
 
 @app.post("/api/chat")
 async def chat_endpoint(request: ChatRequest) -> StreamingResponse:
-    """Uses direct Ollama API streaming.
-    Fallback for models that does not support tool call and agent mode.
+    """
+    Handles standard chat requests by streaming directly from Ollama.
+
+    This endpoint is a fallback for models that do not support tool calling
+    or when agent mode is disabled. It streams the response directly from
+    the Ollama API.
+
+    Args:
+        request: A `ChatRequest` object containing the model and messages.
+
+    Returns:
+        A `StreamingResponse` that streams the Ollama API's output.
     """
     LOGGER.info(
         "/api/chat request received | model=%s | messages=%s",
@@ -209,8 +263,19 @@ async def chat_endpoint(request: ChatRequest) -> StreamingResponse:
 
 @app.post("/api/agent/chat")
 async def agent_chat_endpoint(request: AgentChatRequest) -> StreamingResponse:
-    """Enhanced chat endpoint with agent capabilities.
-    Supports tool calling and multistep reasoning.
+    """
+    Handles chat requests using the agent, with support for tool calling.
+
+    This endpoint activates the agent to process user messages. It supports
+    multi-step reasoning and tool execution, streaming the agent's state
+    back to the client in real-time.
+
+    Args:
+        request: An `AgentChatRequest` object with model, messages, and
+                 tool choice.
+
+    Returns:
+        A `StreamingResponse` that streams the agent's execution events.
     """
     LOGGER.info(
         "/api/agent/chat request received | model=%s | tool_choice=%s | messages=%s",
