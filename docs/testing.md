@@ -1,6 +1,6 @@
 # Testing & QA Overview
 
-This document summarizes the automated test strategy and expected outcomes.
+This document summarizes the automated test strategy, error handling procedures, and expected outcomes for the project.
 
 ## 1. Test Matrix
 
@@ -28,11 +28,27 @@ Current snapshot (Apple M-series laptop, Feb 2025):
 
 > The lower coverage in `src/agent/*` reflects tool integrations that rely on live Ollama runs; stubs/tests cover the FastAPI surface thoroughly.
 
-## 3. Error Handling & Edge Cases
+## 3. Error Handling and Edge Cases
 
+The system is designed to be resilient and provide clear feedback. The following table documents known edge cases, the system's expected response, and the debugging information available.
+
+| Scenario | System Response | User-Facing Error Message | Logs for Debugging |
+|---|---|---|---|
+| **Ollama Server is Down** | The backend fails to connect to the Ollama API. | The UI shows a persistent "Ollama is not running" error banner. The model dropdown is disabled. | The backend logs will show a `ConnectError` with the target Ollama URL (e.g., `Error: Could not connect to Ollama at http://localhost:11434`). |
+| **Model Not Found** | The user selects a model that is not available in their local Ollama instance. | The UI shows an error message: "Model not found. Please pull the model using 'ollama pull <model_name>'." | The backend logs will show a `404 Not Found` error from the Ollama API when the request is made. |
+| **Agent Mode on Incompatible Model** | The user enables "Agent Mode" with a model that does not support tool calling. | The UI displays an error in the chat window: "Agent error: The selected model does not support tool calling. Please select a different model or disable Agent Mode." | The backend logs will show an `Agent error` with details about the failure, often related to the model's inability to generate a valid tool call response. |
+| **Invalid Tool Call** | The agent attempts to call a tool that does not exist or with incorrect arguments. | The UI will show an error message indicating a tool execution failure. | The backend logs will contain a detailed traceback from the LangGraph execution, showing which tool failed and why. |
+| **Network Interruption Mid-Stream** | The connection between the client and the backend is lost while a response is being streamed. | The UI will stop receiving new text. The "Send" button will become available again after a timeout. | The browser's developer console will show a network error for the failed streaming request. Backend logs will show a client disconnect. |
+
+APIs
 - `/api/models` success/failure paths verified via mocked `httpx.AsyncClient`.
 - `/api/chat` streaming success plus network failure case (ensures user-facing JSON error).
 - `/api/agent/chat` covers: simple mode, disabled agent fallback, tool streaming, and catastrophic agent exceptions emitting error events.
+
+### Comprehensive Error Handling Strategy
+
+- **Backend:** All API endpoints are wrapped in `try...except` blocks to catch exceptions (e.g., `httpx.ConnectError`, `httpx.HTTPStatusError`). Errors are logged with detailed context and a user-friendly JSON error message is streamed back to the client.
+- **Frontend:** The frontend checks the `type` of each message in the stream. If it receives a message with `type: "error"`, it displays the content in a prominent error banner or message bubble.
 
 ## 4. Expected Results
 
