@@ -1,5 +1,4 @@
-"""
-@file streaming.py
+"""@file streaming.py
 @description This module handles the core streaming logic for the application.
 It contains two main generator functions: one for streaming responses directly
 from the Ollama API (for simple chat) and another for streaming the complex,
@@ -17,18 +16,20 @@ from src.logger import LOGGER
 
 
 async def ollama_stream_generator(request_data: dict) -> AsyncGenerator[str, None]:
-    """
-    Streams responses directly from the Ollama API.
+    """Streams responses directly from the Ollama API.
 
     This generator function is used for backward compatibility, connecting to
     Ollama's standard chat endpoint and streaming the response line by line.
 
     Args:
+    ----
         request_data: The payload to be sent to the Ollama API, including
                       the model name and messages.
 
     Yields:
+    ------
         A string for each line of the response from the Ollama API.
+
     """
     LOGGER.info("Streaming request -> model=%s", request_data.get("model"))
     try:
@@ -63,21 +64,23 @@ async def agent_stream_generator(  # noqa: C901, PLR0912
         model_name: str,
         tool_choice: str,
 ) -> AsyncGenerator[str, None]:
-    """
-    Streams responses from the agent, including tool calls and reasoning steps.
+    """Streams responses from the agent, including tool calls and reasoning steps.
 
     This function orchestrates the agent's workflow, streaming each step of
     the process, from tool calls and results to the final message. It can
     operate in either agent mode or a simple LLM mode if tools are not required.
 
     Args:
+    ----
         messages: A list of messages in the current chat session.
         model_name: The name of the language model to use.
         tool_choice: The user's preference for using tools ('auto', 'none', etc.).
 
     Yields:
+    ------
         A JSON string for each event in the agent's execution, such as
         status updates, tool calls, tool results, and the final message.
+
     """
     try:
         # Convert messages to LangChain format

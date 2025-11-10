@@ -1,5 +1,4 @@
-"""
-A collection of tools designed to extend the agent's capabilities.
+"""A collection of tools designed to extend the agent's capabilities.
 
 This module provides a variety of utilities that the agent can use to perform
 tasks such as mathematical calculations, unit conversions, and date and time
@@ -17,20 +16,22 @@ from langchain_core.tools import tool
 
 @tool
 def calculator(expression: str) -> str:
-    """
-    Performs mathematical calculations on a given expression.
+    """Performs mathematical calculations on a given expression.
 
     This tool evaluates a string containing a mathematical expression and returns
     the result. To ensure safety, it sanitizes the input by removing any
     characters that are not numbers, operators, or parentheses.
 
     Args:
+    ----
         expression: A string representing the mathematical expression to be
                     evaluated (e.g., "2 + 2", "(75-32)*5/9").
 
     Returns:
+    -------
         A string containing the result of the calculation or an error message
         if the expression is invalid or causes an error.
+
     """
     try:
         # Remove any potentially dangerous characters/functions
@@ -52,21 +53,23 @@ def calculator(expression: str) -> str:
 
 @tool
 def unit_converter(value: float, from_unit: str, to_unit: str) -> str:
-    """
-    Converts a value from one unit to another.
+    """Converts a value from one unit to another.
 
     This tool supports conversions between common units of temperature (Celsius,
     Fahrenheit, Kelvin), length (km, miles, meters, feet, cm, inches), and
     weight (kg, lbs).
 
     Args:
+    ----
         value: The numeric value to be converted.
         from_unit: The source unit (e.g., 'celsius', 'km', 'kg').
         to_unit: The target unit to convert to.
 
     Returns:
+    -------
         A string with the converted value and its unit, or an error message if
         the conversion is not supported.
+
     """
     conversions = {
         # Temperature
@@ -100,16 +103,17 @@ def unit_converter(value: float, from_unit: str, to_unit: str) -> str:
 
 @tool
 def get_current_time() -> str:
-    """
-    Retrieves the current date and time.
+    """Retrieves the current date and time.
 
     This tool returns a formatted string with the current date, time, and day
     of the week, providing a quick way for the agent to access temporal
     information.
 
-    Returns:
+    Returns
+    -------
         A string representing the current date and time (e.g.,
         "📅 Current date and time: 2024-07-14 10:30:00 Sunday").
+
     """
     now = datetime.now()
     return f"📅 Current date and time: {now.strftime('%Y-%m-%d %H:%M:%S %A')}"
@@ -117,18 +121,20 @@ def get_current_time() -> str:
 
 @tool
 def get_timezone_time(timezone: str) -> str:
-    """
-    Gets the current time in a specified timezone.
+    """Gets the current time in a specified timezone.
 
     This tool leverages the `zoneinfo` library to provide the current time in
     any IANA timezone, such as 'America/New_York' or 'Europe/London'.
 
     Args:
+    ----
         timezone: The name of the timezone to get the current time for.
 
     Returns:
+    -------
         A string with the current time in the requested timezone, or an error
         message if the timezone is invalid or `zoneinfo` is not available.
+
     """
     try:
         from zoneinfo import ZoneInfo
@@ -145,19 +151,21 @@ def get_timezone_time(timezone: str) -> str:
 
 @tool
 def days_between_dates(date1: str, date2: str) -> str:
-    """
-    Calculates the number of days between two dates.
+    """Calculates the number of days between two dates.
 
     This tool takes two dates in 'YYYY-MM-DD' format and computes the absolute
     difference in days between them.
 
     Args:
+    ----
         date1: The first date in 'YYYY-MM-DD' format.
         date2: The second date in 'YYYY-MM-DD' format.
 
     Returns:
+    -------
         A string indicating the number of days between the two dates, or an
         error message if the date format is incorrect.
+
     """
     try:
         d1 = datetime.strptime(date1, "%Y-%m-%d")
@@ -172,18 +180,20 @@ def days_between_dates(date1: str, date2: str) -> str:
 
 @tool
 def text_analyzer(text: str) -> str:
-    """
-    Analyzes a given text to provide statistics.
+    """Analyzes a given text to provide statistics.
 
     This tool counts the number of words, characters, and sentences in a piece
     of text. It also calculates the average word length.
 
     Args:
+    ----
         text: The text to be analyzed.
 
     Returns:
+    -------
         A formatted string with the text analysis, including word count,
         character count, sentence count, and average word length.
+
     """
     words = len(text.split())
     chars = len(text)
@@ -198,20 +208,22 @@ def text_analyzer(text: str) -> str:
 
 @tool
 def encode_decode_text(text: str, operation: str = "base64_encode") -> str:
-    """
-    Encodes or decodes text using various formats.
+    """Encodes or decodes text using various formats.
 
     This tool supports Base64 and URL encoding and decoding. The desired
     operation is specified via the `operation` argument.
 
     Args:
+    ----
         text: The text to be encoded or decoded.
         operation: The operation to perform. Must be one of 'base64_encode',
                    'base64_decode', 'url_encode', or 'url_decode'.
 
     Returns:
+    -------
         A string with the result of the encoding or decoding, or an error
         message if the operation is not supported or fails.
+
     """
     try:
         import base64
@@ -236,15 +248,16 @@ def encode_decode_text(text: str, operation: str = "base64_encode") -> str:
 
 # List of all available tools
 def get_tools() -> list:
-    """
-    Collects and returns a list of all available tools.
+    """Collects and returns a list of all available tools.
 
     This function gathers all the functions decorated with `@tool` in this
     module and returns them as a list. This list is then used to initialize
     the agent with its available toolset.
 
-    Returns:
+    Returns
+    -------
         A list of all tool functions.
+
     """
     return [
         # Math & Conversion
