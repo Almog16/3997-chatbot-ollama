@@ -14,7 +14,7 @@ You must have Ollama installed and running on your system.
 2. **Download a Model:** Before running the application, ensure you have a model downloaded (e.g., `gemma3:1b`):
 
 ```
-ollama pull gemma3:1b
+ollama pull qwen3:8b
 ```
 
 3. **Verify:** Ollama should be running on the default address: `http://localhost:11434`.
@@ -204,7 +204,7 @@ If you select a model and get an error that it's not available:
 
 -   **Pull the Model**: Make sure you have downloaded the model using the `ollama pull` command. For example:
     ```bash
-    ollama pull gemma3:8b
+    ollama pull qwen3:8b
     ```
 -   **Check Model Name**: Ensure the model name in the application's model selector exactly matches the name of the model you downloaded. You can list all downloaded models with `ollama list`.
 
