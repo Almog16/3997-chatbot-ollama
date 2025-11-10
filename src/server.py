@@ -1,5 +1,4 @@
-"""
-@file server.py
+"""@file server.py
 @description This is the main entry point for the backend server.
 It is responsible for:
 - Initializing the FastAPI application.

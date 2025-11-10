@@ -1,5 +1,4 @@
-"""
-Configuration management for the Ollama Chatbot Backend.
+"""Configuration management for the Ollama Chatbot Backend.
 
 This module reads settings from environment variables and provides
 default values for easy setup. It centralizes all configuration

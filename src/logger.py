@@ -7,8 +7,7 @@ LOGGER = logging.getLogger()
 
 
 class PrettyPrintFormatter(logging.Formatter):
-    """
-    A custom log formatter for enhancing readability during local development.
+    """A custom log formatter for enhancing readability during local development.
 
     This formatter presents log messages in a clean, easy-to-read format,
     making it simpler to debug the application. It includes the log level,
@@ -17,14 +16,16 @@ class PrettyPrintFormatter(logging.Formatter):
     """
 
     def format(self: "PrettyPrintFormatter", record: LogRecord) -> str:
-        """
-        Formats a log record into a human-readable string.
+        """Formats a log record into a human-readable string.
 
         Args:
+        ----
             record: The `LogRecord` to be formatted.
 
         Returns:
+        -------
             A string representing the formatted log entry.
+
         """
         log_entry = f"{record.levelname}: [{record.name}] {record.getMessage()}"
         if record.exc_info:
@@ -33,8 +34,7 @@ class PrettyPrintFormatter(logging.Formatter):
 
 
 def initialize_logger() -> None:
-    """
-    Sets up the root logger for the application.
+    """Sets up the root logger for the application.
 
     This function configures the application's logging system by first
     disabling all existing loggers from imported modules. This ensures that
@@ -48,8 +48,7 @@ def initialize_logger() -> None:
 
 
 def _set_root_logger() -> None:
-    """
-    Configures the root logger with a custom formatter and stream handler.
+    """Configures the root logger with a custom formatter and stream handler.
 
     This internal function clears any existing handlers on the root logger,
     sets the logging level to DEBUG, and adds a new handler that streams logs

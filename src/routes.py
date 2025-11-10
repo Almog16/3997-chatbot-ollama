@@ -1,5 +1,4 @@
-"""
-@file routes.py
+"""@file routes.py
 @description This module defines the API routes for the backend server.
 It includes endpoints for health checks, listing available models, and handling
 both simple and agent-based chat requests. All routes are collected under a
@@ -19,15 +18,16 @@ router = APIRouter()
 
 @router.get("/api/health")
 async def health_check() -> dict[str, str]:
-    """
-    Performs a health check on the API.
+    """Performs a health check on the API.
 
     This endpoint can be used to verify that the FastAPI server is running and
     to check the status of agent mode.
 
-    Returns:
+    Returns
+    -------
         A dictionary containing the health status, a message, and the current
         agent mode status ('enabled' or 'disabled').
+
     """
     return {
         "status": "ok",
@@ -38,16 +38,17 @@ async def health_check() -> dict[str, str]:
 
 @router.get("/api/models")
 async def list_models() -> dict:
-    """
-    Retrieves the list of available models from the Ollama API.
+    """Retrieves the list of available models from the Ollama API.
 
     This endpoint fetches model tags from the local Ollama instance and returns
     them as a list. It includes error handling for network issues or if the
     Ollama server is not accessible.
 
-    Returns:
+    Returns
+    -------
         A dictionary containing a list of model objects, or an error message
         if the request fails.
+
     """
     try:
         async with httpx.AsyncClient() as client:
@@ -62,18 +63,20 @@ async def list_models() -> dict:
 
 @router.post("/api/chat")
 async def chat_endpoint(request: ChatRequest) -> StreamingResponse:
-    """
-    Handles standard chat requests by streaming directly from Ollama.
+    """Handles standard chat requests by streaming directly from Ollama.
 
     This endpoint is a fallback for models that do not support tool calling
     or when agent mode is disabled. It streams the response directly from
     the Ollama API.
 
     Args:
+    ----
         request: A `ChatRequest` object containing the model and messages.
 
     Returns:
+    -------
         A `StreamingResponse` that streams the Ollama API's output.
+
     """
     LOGGER.info(
         "/api/chat request received | model=%s | messages=%s",
@@ -89,19 +92,21 @@ async def chat_endpoint(request: ChatRequest) -> StreamingResponse:
 
 @router.post("/api/agent/chat")
 async def agent_chat_endpoint(request: AgentChatRequest) -> StreamingResponse:
-    """
-    Handles chat requests using the agent, with support for tool calling.
+    """Handles chat requests using the agent, with support for tool calling.
 
     This endpoint activates the agent to process user messages. It supports
     multi-step reasoning and tool execution, streaming the agent's state
     back to the client in real-time.
 
     Args:
+    ----
         request: An `AgentChatRequest` object with model, messages, and
                  tool choice.
 
     Returns:
+    -------
         A `StreamingResponse` that streams the agent's execution events.
+
     """
     LOGGER.info(
         "/api/agent/chat request received | model=%s | tool_choice=%s | messages=%s",
