@@ -14,7 +14,7 @@ You must have Ollama installed and running on your system.
 2. **Download a Model:** Before running the application, ensure you have a model downloaded (e.g., `gemma3:1b`):
 
 ```
-ollama pull gemma3:1b
+ollama pull qwen3:8b
 ```
 
 3. **Verify:** Ollama should be running on the default address: `http://localhost:11434`.
@@ -186,3 +186,36 @@ See `prompts/README.md` for detailed development workflow.
 **Backend:** Python 3.10+, FastAPI, LangChain, LangGraph, Ollama  
 **Frontend:** React 18, TypeScript, Vite, Tailwind CSS  
 **Tools:** Ruff (linting), Make (automation), UV (dependency management)
+
+## Troubleshooting
+
+Here are some common issues and how to resolve them:
+
+### 1. Ollama Connection Error
+
+If the application shows a "Ollama is not running" error, it means the backend cannot connect to the Ollama server.
+
+-   **Is Ollama Running?**: Make sure the Ollama application is running on your machine. You can verify this by opening `http://localhost:11434` in your browser. You should see the text "Ollama is running".
+-   **Check Host and Port**: By default, the application tries to connect to `http://localhost:11434`. If you have configured Ollama to run on a different address, you will need to update the `OLLAMA_HOST` and `OLLAMA_PORT` environment variables in the backend.
+
+### 2. Model Not Found
+
+If you select a model and get an error that it's not available:
+
+-   **Pull the Model**: Make sure you have downloaded the model using the `ollama pull` command. For example:
+    ```bash
+    ollama pull qwen3:8b
+    ```
+-   **Check Model Name**: Ensure the model name in the application's model selector exactly matches the name of the model you downloaded. You can list all downloaded models with `ollama list`.
+
+### 3. Agent Mode Fails or Gives Unexpected Results
+
+-   **Model Compatibility**: Agent mode requires a model that is fine-tuned for tool-calling. Not all models support this. Recommended models include `qwen3`, `deepseek-coder`, etc. If you use an incompatible model, you will see an error message in the UI.
+-   **Disable Agent Mode**: For models that don't support tool-calling, or for faster, more direct responses, simply turn off the "Agent Mode" toggle in the UI.
+
+### 4. Frontend or Backend Fails to Start
+
+-   **Dependencies**: Ensure all dependencies are installed correctly.
+    -   For the backend: `make install`
+    -   For the frontend: `make install-client`
+-   **Port Conflicts**: Make sure ports `8000` (backend) and `5173` (frontend) are not already in use by another application. If they are, you can either stop the other application or configure this project to use different ports.

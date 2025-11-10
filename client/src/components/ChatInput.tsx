@@ -1,8 +1,15 @@
 /**
- * ChatInput Component
- * Multi-line support with fixed alignment
+ * @file ChatInput.tsx
+ * @description This component renders a controlled text input field for composing and sending chat messages.
+ * It includes a send button that shows a loading state and is disabled when a message is in-flight.
+ * It supports multi-line input via Shift+Enter and sends on Enter.
+ *
+ * @props {string} input - The current value of the text input.
+ * @props {boolean} isStreaming - Indicates if a message is currently being streamed.
+ * @props {boolean} modelsAvailable - Indicates if any Ollama models are available to chat with.
+ * @props {(value: string) => void} onInputChange - Callback function to update the input value.
+ * @props {() => void} onSend - Callback function to handle sending the message.
  */
-
 import React from 'react';
 import { Send, Loader2, Sparkles } from 'lucide-react';
 

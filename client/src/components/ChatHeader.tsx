@@ -1,7 +1,18 @@
 /**
- * ChatHeader Component - Enhanced Version
+ * @file ChatHeader.tsx
+ * @description This component renders the header for the chat interface.
+ * It includes the application title, a status indicator, and controls for managing the chat session.
+ *
+ * @props {string} selectedModel - The currently selected Ollama model.
+ * @props {OllamaModel[]} models - The list of available Ollama models.
+ * @props {boolean} loading - Indicates if the models are currently being loaded.
+ * @props {string | null} error - An error message to display, if any.
+ * @props {boolean} agentMode - Indicates whether agent mode is enabled.
+ * @props {boolean} [isStreaming=false] - Indicates if a message is currently being streamed.
+ * @props {(model: string) => void} onModelChange - Callback for when the selected model is changed.
+ * @props {() => void} onClearConversation - Callback to clear the current conversation.
+ * @props {() => void} onAgentModeToggle - Callback to toggle agent mode.
  */
-
 import type { FC } from 'react';
 import { Trash2, AlertCircle, Zap, Loader2, Sparkles, ChevronDown } from 'lucide-react';
 import type { OllamaModel } from '../types';
@@ -40,8 +51,8 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
               {/* Status Indicator */}
               <div className="relative">
                 <div className={`w-2.5 h-2.5 rounded-full ${
-                  isStreaming 
-                    ? 'bg-blue-500 animate-pulse' 
+                  isStreaming
+                    ? 'bg-blue-500 animate-pulse'
                     : 'bg-emerald-500'
                 }`}></div>
                 {isStreaming && (

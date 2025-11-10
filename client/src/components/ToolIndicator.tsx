@@ -1,7 +1,13 @@
 /**
- * ToolIndicator Component - Enhanced Version
+ * @file ToolIndicator.tsx
+ * @description This component displays the status of a tool being used by the agent.
+ * It shows the tool's name, an icon, and its current state (processing or completed).
+ * The component is expandable to reveal the arguments passed to the tool and the result it returned.
+ *
+ * @props {string} tool - The name of the tool being used.
+ * @props {Record<string, any>} [args] - The arguments passed to the tool.
+ * @props {string} [result] - The result returned by the tool. When present, the indicator shows a completed state.
  */
-
 import {type FC, useState, useEffect } from 'react';
 import {
   Search, Calculator, Clock, BookOpen, Loader2, Globe,

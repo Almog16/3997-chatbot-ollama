@@ -1,7 +1,15 @@
 /**
- * ChatMessages Component - Enhanced Version
+ * @file ChatMessages.tsx
+ * @description This component is responsible for rendering the list of chat messages.
+ * It displays an empty state with suggestions when there are no messages.
+ * It also shows a typing indicator when the assistant is generating a response.
+ * The component automatically scrolls to the latest message.
+ *
+ * @props {Message[]} messages - An array of message objects to be displayed.
+ * @props {boolean} isStreaming - Indicates if a message is currently being streamed.
+ * @props {string} selectedModel - The currently selected Ollama model, shown in the empty state.
+ * @props {(text: string) => void} [onSuggestionClick] - Optional callback for when a suggestion is clicked.
  */
-
 import React, { useRef, useEffect } from 'react';
 import { Sparkles, Loader2, Zap, MessageSquare } from 'lucide-react';
 import type { Message } from '../types';

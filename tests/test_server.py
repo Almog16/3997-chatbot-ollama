@@ -7,7 +7,8 @@ import pytest
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
-from src import server
+from src import routes, server, streaming
+from src.config import OLLAMA_API_BASE, OLLAMA_TAGS_URL
 
 
 @pytest_asyncio.fixture
@@ -55,10 +56,10 @@ async def test_list_models_success(
             return None
 
         async def get(self, url: str) -> DummyResponse:
-            assert url == "http://localhost:11434/api/tags"
+            assert url == OLLAMA_TAGS_URL
             return DummyResponse(models_payload)
 
-    monkeypatch.setattr(server.httpx, "AsyncClient", DummyAsyncClient)
+    monkeypatch.setattr(routes.httpx, "AsyncClient", DummyAsyncClient)
 
     response = await async_client.get("/api/models")
 
@@ -71,7 +72,7 @@ async def test_list_models_failure(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    request = httpx.Request("GET", "http://localhost:11434/api/tags")
+    request = httpx.Request("GET", OLLAMA_TAGS_URL)
 
     class FailingAsyncClient:
         def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -86,7 +87,7 @@ async def test_list_models_failure(
         async def get(self, url: str) -> None:
             raise httpx.ConnectError("boom", request=request)
 
-    monkeypatch.setattr(server.httpx, "AsyncClient", FailingAsyncClient)
+    monkeypatch.setattr(routes.httpx, "AsyncClient", FailingAsyncClient)
 
     response = await async_client.get("/api/models")
 
@@ -132,11 +133,11 @@ async def test_chat_endpoint_streams_response(
 
         def stream(self, method: str, url: str, json: dict[str, Any]) -> DummyStreamResponse:
             assert method == "POST"
-            assert url == server.OLLAMA_API_BASE
+            assert url == OLLAMA_API_BASE
             assert json["model"] == "test-model"
             return DummyStreamResponse()
 
-    monkeypatch.setattr(server.httpx, "AsyncClient", StreamingAsyncClient)
+    monkeypatch.setattr(streaming.httpx, "AsyncClient", StreamingAsyncClient)
 
     payload = {"model": "test-model", "messages": [], "stream": True}
 
@@ -157,7 +158,7 @@ async def test_agent_endpoint_simple_mode(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", True)
+    monkeypatch.setattr(streaming, "ENABLE_AGENT_MODE", True)
 
     class DummyLLM:
         def __init__(self) -> None:
@@ -168,7 +169,7 @@ async def test_agent_endpoint_simple_mode(
             return type("Response", (), {"content": "Simple reply"})
 
     dummy_llm = DummyLLM()
-    monkeypatch.setattr(server, "create_simple_llm", lambda model_name: dummy_llm)
+    monkeypatch.setattr(streaming, "create_simple_llm", lambda model_name: dummy_llm)
 
     response = await async_client.post(
         "/api/agent/chat",
@@ -194,7 +195,7 @@ async def test_agent_endpoint_tool_flow(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", True)
+    monkeypatch.setattr(streaming, "ENABLE_AGENT_MODE", True)
 
     class DummyMessage:
         def __init__(self, content: str = "", tool_calls: list | None = None) -> None:
@@ -235,7 +236,7 @@ async def test_agent_endpoint_tool_flow(
                 ]
             }
 
-    monkeypatch.setattr(server, "create_agent_graph", lambda model_name: DummyAgent())
+    monkeypatch.setattr(streaming, "create_agent_graph", lambda model_name: DummyAgent())
 
     response = await async_client.post(
         "/api/agent/chat",
@@ -264,13 +265,13 @@ async def test_agent_endpoint_disabled_mode_falls_back_to_simple(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", False)
+    monkeypatch.setattr(streaming, "ENABLE_AGENT_MODE", False)
 
     class DummyLLM:
         def invoke(self, messages: list[Any]) -> Any:
             return type("Response", (), {"content": "Fallback reply"})
 
-    monkeypatch.setattr(server, "create_simple_llm", lambda model_name: DummyLLM())
+    monkeypatch.setattr(streaming, "create_simple_llm", lambda model_name: DummyLLM())
 
     response = await async_client.post(
         "/api/agent/chat",
@@ -297,7 +298,7 @@ async def test_agent_endpoint_stream_handles_agent_exception(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    monkeypatch.setattr(server, "ENABLE_AGENT_MODE", True)
+    monkeypatch.setattr(streaming, "ENABLE_AGENT_MODE", True)
 
     class ExplodingIterator:
         def __aiter__(self) -> "ExplodingIterator":
@@ -310,7 +311,7 @@ async def test_agent_endpoint_stream_handles_agent_exception(
         def astream(self, initial_state: dict) -> ExplodingIterator:
             return ExplodingIterator()
 
-    monkeypatch.setattr(server, "create_agent_graph", lambda model_name: ExplodingAgent())
+    monkeypatch.setattr(streaming, "create_agent_graph", lambda model_name: ExplodingAgent())
 
     response = await async_client.post(
         "/api/agent/chat",
@@ -336,7 +337,7 @@ async def test_chat_endpoint_handles_connect_error(
     monkeypatch: pytest.MonkeyPatch,
     async_client: AsyncClient,
 ) -> None:
-    request = httpx.Request("POST", server.OLLAMA_API_BASE)
+    request = httpx.Request("POST", OLLAMA_API_BASE)
 
     class FailingStreamResponse:
         async def __aenter__(self) -> "FailingStreamResponse":
@@ -358,7 +359,7 @@ async def test_chat_endpoint_handles_connect_error(
         def stream(self, method: str, url: str, json: dict[str, Any]) -> FailingStreamResponse:
             return FailingStreamResponse()
 
-    monkeypatch.setattr(server.httpx, "AsyncClient", FailingStreamingClient)
+    monkeypatch.setattr(streaming.httpx, "AsyncClient", FailingStreamingClient)
 
     response = await async_client.post(
         "/api/chat",
@@ -371,5 +372,5 @@ async def test_chat_endpoint_handles_connect_error(
             errors.append(json.loads(line))
 
     assert errors == [
-        {"error": f"Error: Could not connect to Ollama at {server.OLLAMA_API_BASE}"},
+        {"error": f"Error: Could not connect to Ollama at {OLLAMA_API_BASE}"},
     ]

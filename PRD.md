@@ -4,7 +4,7 @@
 
 A local-first chat experience that lets power users converse with Ollama-hosted LLMs through a polished web UI backed by a FastAPI streaming service. The product emphasizes privacy (everything stays on-device), multi-conversation management, and optional tool-enhanced agent runs.
 
-## 2. Goals & Success Criteria
+## 2. Goals & Success Criteria (KPIs)
 
 | Goal | Success Metric |
 |------|----------------|
@@ -23,7 +23,7 @@ Out of scope: hosted inference, user auth, cloud sync, telemetry.
 
 ## 4. User Journey
 
-1. Launch FastAPI backend (`make run`) and React frontend (`npm run dev`).
+1. Launch FastAPI backend (`make run`) and React frontend (`make run-client`).
 2. UI fetches `/api/models`; dropdown auto-selects first available model (e.g., `gemma3:4b`).
 3. User creates a conversation, sends a prompt, and sees streaming updates.
 4. Optional: toggle Agent Mode → backend proxies `/api/agent/chat`, displays tool call/result indicators.
