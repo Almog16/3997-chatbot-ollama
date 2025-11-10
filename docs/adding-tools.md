@@ -1,27 +1,28 @@
 # How to Add a New Tool to the Agent
 
-This guide explains how to extend the agent's capabilities by adding a new custom tool. The agent uses tools to perform actions beyond its core language model, such as searching the web, performing calculations, or accessing other APIs.
+## The Importance of Extensibility
 
-Our agent's tool system is built using LangChain's `@tool` decorator, which makes it easy to convert a standard Python function into a tool that the agent can use.
+A key design goal of this project is **extensibility**. The agent's true power comes from the tools it can use to interact with the outside world. This document serves as the primary guide for developers looking to extend the agent's capabilities by adding new tools.
 
-## Step 1: Define the Tool Function
+Following this guide demonstrates that the agent is not a closed system but a flexible framework designed for growth.
 
-First, you need to create the Python function that will perform the desired action. This function should be placed in a relevant module within the `src/agent/tools/` directory. If no existing file fits, you can create a new one.
+## Step 1: Define the Tool Function (`The Extension Point`)
 
-A tool function should have the following characteristics:
-- It is decorated with the `@tool` decorator from `langchain_core.tools`.
-- It has a clear, descriptive name that tells the agent what it does.
-- It has a detailed docstring that explains its purpose, arguments, and what it returns. **This docstring is critical**, as the agent uses it to decide when and how to use the tool.
-- It has type hints for all its arguments and its return value.
+The core of adding a new feature is defining a Python function that will serve as the tool. This function is the "hook" into our agent system.
+
+**Location:** Place your new tool function in a relevant module inside `src/agent/tools/`. If no existing file fits, create a new one (e.g., `src/agent/tools/my_new_tool.py`).
+
+**Requirements for a Tool Function:**
+1.  **`@tool` Decorator:** The function *must* be decorated with `@tool` from `langchain_core.tools`. This is how LangChain identifies it as a tool.
+2.  **Descriptive Name:** The function name should be clear and verb-oriented (e.g., `get_stock_price`, `calculate_days_between_dates`).
+3.  **Critical Docstring:** The function's docstring is not just for humans; **the agent reads it** to understand what the tool does, what its arguments are, and when to use it. It must be detailed and precise.
+4.  **Type Hinting:** All arguments and the return value must have clear Python type hints.
 
 ### Example: A Simple Weather Tool
 
-Let's say we want to create a tool that gets the weather for a specific city.
-
-1.  Create a new file: `src/agent/tools/weather.py`.
-2.  Add the following code:
-
 ```python
+# In `src/agent/tools/weather.py`
+
 from langchain_core.tools import tool
 
 @tool
@@ -43,22 +44,18 @@ def get_current_weather(city: str) -> str:
         return "The weather in Paris is 10°C and cloudy."
     else:
         return f"Sorry, I don't know the weather for {city}."
-
 ```
 
-## Step 2: Register the New Tool with the Agent
+## Step 2: Register the Tool with the Agent
 
-After defining the tool, you need to make the agent aware of it. This is done by adding the tool to the list of tools that are passed to the agent's constructor.
+Once the tool is defined, you must register it with the agent so it knows it exists.
 
-1.  Open the `src/agent/graph.py` file.
-2.  Import your new tool function at the top of the file:
-
+1.  **Open `src/agent/graph.py`**. This file is responsible for constructing the agent.
+2.  **Import** your new tool function at the top of the file.
     ```python
     from src.agent.tools.weather import get_current_weather
     ```
-
-3.  Find the `create_agent_graph` function. Inside this function, there is a list named `tools`. Add your new tool to this list:
-
+3.  **Add the tool to the `tools` list** inside the `create_agent_graph` function. This list is the central registry for all of the agent's capabilities.
     ```python
     def create_agent_graph(model_name: str) -> CompiledGraph:
         # ... (other code) ...
@@ -69,7 +66,7 @@ After defining the tool, you need to make the agent aware of it. This is done by
             get_webpage_content,
             calculator,
             # ... (other existing tools) ...
-            get_current_weather,  # <-- Add your new tool here
+            get_current_weather,  # <-- Register your new tool here
         ]
 
         # ... (rest of the function) ...
@@ -77,12 +74,13 @@ After defining the tool, you need to make the agent aware of it. This is done by
 
 ## Step 3: Test the New Tool
 
-That's it! The agent is now aware of your new tool and can use it to answer relevant questions.
+With the tool defined and registered, the agent can now use it.
 
-To test it, run the application, make sure "Agent Mode" is enabled, and ask a question that should trigger your new tool. For our example, you could ask:
+1.  Run the application (`make run`).
+2.  Enable "Agent Mode" in the UI.
+3.  Ask a question that should trigger your tool, for example:
+    > "What's the weather like in London?"
 
-> "What's the weather like in London?"
+You should see the UI indicate that the `get_current_weather` tool was used, and the agent should provide an answer based on its output.
 
-You should see the agent call the `get_current_weather` tool in the UI and then provide the answer based on the tool's output.
-
-By following this process, you can easily extend the agent with a wide range of custom capabilities.
+This process confirms that our system is successfully extensible.
