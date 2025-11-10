@@ -4,7 +4,7 @@
 
 A local-first chat experience that lets power users converse with Ollama-hosted LLMs through a polished web UI backed by a FastAPI streaming service. The product emphasizes privacy (everything stays on-device), multi-conversation management, and optional tool-enhanced agent runs.
 
-## 2. Goals & Success Criteria
+## 2. Goals & Success Criteria (KPIs)
 
 | Goal | Success Metric |
 |------|----------------|
